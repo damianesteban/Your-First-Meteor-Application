@@ -24,7 +24,7 @@ if(Meteor.isClient){
   // Instead, we create a block.  We use the JSON format in between the curly brackets.
   Template.leaderboard.helpers({
     'player': function(){
-        return "Some text from the player helper function"
+        return PlayersList.find();
     },
     'otherHelperFunction': function(){
       return "Some text from some other help function"

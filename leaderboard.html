@@ -10,6 +10,12 @@ the body.  The Meteor templating system uses "Spacebars" syntax. -->
 </body>
 
 <template name="leaderboard">
- {{ player }}
- {{ otherHelperFunction }}
+<!-- If we leave the code below as {{ player }}, the result is: [object Object].
+ We need to create an each block.  -->
+ <ul>
+  {{#each player}}
+    <li>{{name}}: {{score}}</li>
+  {{/each}}
+</ul>
+
 </template>
