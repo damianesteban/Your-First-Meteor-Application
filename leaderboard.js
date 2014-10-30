@@ -26,8 +26,8 @@ if(Meteor.isClient){
     'player': function(){
         return PlayersList.find();
     },
-    'otherHelperFunction': function(){
-      return "Some text from some other help function"
+    'count': function(){
+        return PlayersList.find().count();
     }
   });
 }
