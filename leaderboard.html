@@ -1,9 +1,14 @@
 <head>
-  <title>leaderboard</title>
+  <title>Leaderboard</title>
 </head>
 
 <body>
   <h1>The Leaderboard</h1>
-
+<!-- in order to make our template "appear", we have to inject it into
+the body.  The Meteor templating system uses "Spacebars" syntax. -->
+  {{> leaderboard }}
 </body>
 
+<template name="leaderboard">
+  Hello World from a Template!
+</template>
