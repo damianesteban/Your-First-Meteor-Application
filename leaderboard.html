@@ -14,7 +14,8 @@ the body.  The Meteor templating system uses "Spacebars" syntax. -->
  We need to create an each block.  -->
   <ul>
     {{#each player}}
-      <li>{{name}}: {{score}}</li>
+      <!-- we should add a class to our li element, so we can target it specifically. -->
+      <li class="player">{{name}}: {{score}}</li>
     {{/each}}
   </ul>
     <p>Total number of players is: {{count}}</p>

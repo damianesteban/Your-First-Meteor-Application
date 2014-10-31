@@ -30,10 +30,20 @@ if(Meteor.isClient){
         return PlayersList.find().count();
     }
   });
-}
-
-// Now if we add another conditional:
-if(Meteor.isServer){
-  // This code only runs on the server! (you'll see it in the command line only!)
-  // console.log("Hello Server!");
-}
+  // We can create events in Meteor that we're able to trigger the execution of.
+  // Example:
+  // Template.leaderboard.events();
+  // Just like helpers, events have to be tied to templates.  We format our events
+  // similarly to helpers.  The 'click' is the event type.
+  Template.leaderboard.events({
+    //'click': function() {
+    //    console.log("You clicked something");
+    // }
+    // While randomly clicking things are fun, we want it to trigger when something specific
+    // is clicked (such as an 'li' element or a button, and we want it to be useful.)
+    // To do this, we'll use event selectors.  We'll also attach the player class to the
+    // li element to specify on what specifically we want our event to be triggered.
+    'click li.player': function () {
+      console.log("You clicked a list item");
+    }
+  })}
