@@ -45,5 +45,15 @@ if(Meteor.isClient){
     // li element to specify on what specifically we want our event to be triggered.
     'click li.player': function () {
       console.log("You clicked a list item");
+      // We'll create our first session inside this event.
+      Session.set('selectedPlayer', 'session value test');
+      // We're using the Session.get function and passing through the name of the "selectedPlayer"
+      // session we created a moment ago.
+      Session.get('selectedPlayer');
+      // to output the value of this session to the console, we'll store this result inside a variable:
+      var selectedPlayer = Session.get('selectedPlayer');
+      console.log(selectedPlayer);
     }
-  })}
+  });
+
+}
