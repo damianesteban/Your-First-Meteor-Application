@@ -32,8 +32,26 @@ if(Meteor.isClient){
         return PlayersList.find().count();
     },
     'selectedClass': function() {
-        return "selected";
-    }
+        // return "selected";
+        // the code below is important!  We are retrieving the unique ID of the player.
+        // Instead of it appearing in the console though, it will appear inside
+        // of the 'class' attribute for the 'li' elements (via the each block).
+        // Inspecting this in Dev Tools shows you each player's unique ID.
+        // Here is what is happening:
+        // 1 - When a user clicks on one of the players in the list, the unique ID of that player
+        // is stored inside a sessionthat we've named "selectedPlayer".
+        // 2 - The ID stored in that session is then matched against all of the IDs of the players
+        // in the list.  Because the player's ID will always be unique, there can only ever be
+        // a single match, and when there is a match, the static text of "selected" will be
+        // returned by the selectedClass function and placed inside the 'class' attribute for that
+        // player's 'li' element.
+        // 3 - the background color is then changed to yellow.
+        var playerId = this._id;
+        var selectedPlayer = Session.get('selectedPlayer');
+        if (playerId == selectedPlayer) {
+          return "selected"; // this matches up with the selected CSS class, so it turns it yellow.
+        }
+      }
   });
   // We can create events in Meteor that we're able to trigger the execution of.
   // Example:
@@ -51,6 +69,25 @@ if(Meteor.isClient){
     'click.player': function() {
       var playerId = this._id;
       Session.set('selectedPlayer', playerId);
-    }
+    },
+    'click.increment': function() {
+      var selectedPlayer = Session.get('selectedPlayer');
+      // Below we add the MongoDB update function.  Between the brackets, we define:
+      // 1 - What document we want to modify.
+      // 2 - How we want to modify it.
+      // If we leave this as is and click on the player, we get a whole
+      // bunch of errors: 'errorClass: MinimongoError: Modifier must be an object...'
+      // So, we have to pass a second argument into the update function that determines
+      // what part of the document we want to modify.
+      // We need to use a MongoDB operator that allows us to set the value of the score field
+      // without ever deleting the document.
+      // - We use the 'set' operator that we can use to modify the value of a field
+      // (or multiple fields) without deleting the document.  So after the colon, we just pass
+      // through the fields we want to modify and their new values:
+      // PlayersList.update(selectedPlayer, {$set: {score: 5} });
+      // BUT, $set will do only that, "set" the value to 5.  We want to increment the value
+      // by 5, so we do the following:
+      PlayersList.update(selectedPlayer, {$inc: {score: 5} });
+      }
   });
 }
