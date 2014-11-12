@@ -20,6 +20,7 @@ the body.  The Meteor templating system uses "Spacebars" syntax. -->
       <li class="player {{selectedClass}}">{{name}}: {{score}}</li>
     {{/each}}
   </ul>
+    <p>Selected Player: {{showSelectedPlayer.name}}</p>
     <input type="button" class="increment" value="Give 5 Points">
     <input type="button" class="decrement" value="Take 5 Points">
     <p>Total number of players is: {{count}}</p>

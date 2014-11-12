@@ -25,16 +25,16 @@ if(Meteor.isClient){
   // Note:  This is just like an object (more or less), and the syntax for declaring
   // functions in object literals.
   Template.leaderboard.helpers({
-    'player': function(){
+
         // by passing in in the sort method, we define how we want to sort
         // our players.  In this case we sort by the 'score'
         // attribute, -1, which displays (sorts) the players in descending order.
         // Problem is...what happens if two players have the same score?  In
         // that case, we want to sort alphabetically as well, so we sort by name
         // secondarily.
-        return PlayersList.find({}, {sort: {score: -1, name: 1} } );
-    },
-    'selectedClass': function() {
+        'player': function(){
+          return PlayersList.find({}, {sort: {score: -1, name: 1} } );
+        },
         // return "selected";
         // the code below is important!  We are retrieving the unique ID of the player.
         // Instead of it appearing in the console though, it will appear inside
@@ -49,12 +49,26 @@ if(Meteor.isClient){
         // returned by the selectedClass function and placed inside the 'class' attribute for that
         // player's 'li' element.
         // 3 - the background color is then changed to yellow.
-        var playerId = this._id;
-        var selectedPlayer = Session.get('selectedPlayer');
-        if (playerId == selectedPlayer) {
+        'selectedClass': function() {
+          var playerId = this._id;
+          var selectedPlayer = Session.get('selectedPlayer');
+            if (playerId == selectedPlayer) {
           return "selected"; // this matches up with the selected CSS class, so it turns it yellow.
+          }
+        },
+        // When a user selects one of the players, that player's name should
+        // appear beneath the list of players.  This isn't the most useful feature in the
+        // world, but:
+        // 1 - It's part of the original Leaderboard application.
+        // 2 - It means we can talk about a couple of Meteor's features.
+        // To begin with, create a new helper function:
+        // By using the findOne function, we can retrieve the unique ID of a document
+        // as the only argument.  However, the findOne function is retrieving the entire
+        // document, so we need to specify we only want to show the 'name' field.
+        'showSelectedPlayer': function() {
+          var selectedPlayer = Session.get('selectedPlayer');
+          return PlayersList.findOne(selectedPlayer);
         }
-      }
   });
   // We can create events in Meteor that we're able to trigger the execution of.
   // Example:
