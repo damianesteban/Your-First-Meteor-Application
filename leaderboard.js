@@ -26,10 +26,13 @@ if(Meteor.isClient){
   // functions in object literals.
   Template.leaderboard.helpers({
     'player': function(){
-        return PlayersList.find();
-    },
-    'count': function(){
-        return PlayersList.find().count();
+        // by passing in in the sort method, we define how we want to sort
+        // our players.  In this case we sort by the 'score'
+        // attribute, -1, which displays (sorts) the players in descending order.
+        // Problem is...what happens if two players have the same score?  In
+        // that case, we want to sort alphabetically as well, so we sort by name
+        // secondarily.
+        return PlayersList.find({}, {sort: {score: -1, name: 1} } );
     },
     'selectedClass': function() {
         // return "selected";
@@ -66,12 +69,10 @@ if(Meteor.isClient){
     // is clicked (such as an 'li' element or a button, and we want it to be useful.)
     // To do this, we'll use event selectors.  We'll also attach the player class to the
     // li element to specify on what specifically we want our event to be triggered.
-    'click.player': function() {
-      var playerId = this._id;
-      Session.set('selectedPlayer', playerId);
+    'click .player': function() {
+        var playerId = this._id;
+        Session.set('selectedPlayer', playerId);
     },
-    'click.increment': function() {
-      var selectedPlayer = Session.get('selectedPlayer');
       // Below we add the MongoDB update function.  Between the brackets, we define:
       // 1 - What document we want to modify.
       // 2 - How we want to modify it.
@@ -87,7 +88,13 @@ if(Meteor.isClient){
       // PlayersList.update(selectedPlayer, {$set: {score: 5} });
       // BUT, $set will do only that, "set" the value to 5.  We want to increment the value
       // by 5, so we do the following:
-      PlayersList.update(selectedPlayer, {$inc: {score: 5} });
+      'click .increment': function() {
+          var selectedPlayer = Session.get('selectedPlayer');
+          PlayersList.update(selectedPlayer, {$inc: {score: 5} });
+      },
+      'click .decrement': function() {
+          var selectedPlayer = Session.get('selectedPlayer');
+          PlayersList.update(selectedPlayer, {$inc: {score: -5} });
       }
   });
 }
