@@ -84,14 +84,14 @@ if(Meteor.isClient){
     // To do this, we'll use event selectors.  We'll also attach the player class to the
     // li element to specify on what specifically we want our event to be triggered.
     'click .player': function() {
-        var playerId = this._id;
-        Session.set('selectedPlayer', playerId);
+      var playerId = this._id;
+      Session.set('selectedPlayer', playerId);
     },
       // Below we add the MongoDB update function.  Between the brackets, we define:
       // 1 - What document we want to modify.
       // 2 - How we want to modify it.
       // If we leave this as is and click on the player, we get a whole
-      // bunch of errors: 'errorClass: MinimongoError: Modifier must be an object...'
+      // bunch of errors: 'errorClass: Minimongo Error: Modifier must be an object...'
       // So, we have to pass a second argument into the update function that determines
       // what part of the document we want to modify.
       // We need to use a MongoDB operator that allows us to set the value of the score field
@@ -109,6 +109,58 @@ if(Meteor.isClient){
       'click .decrement': function() {
           var selectedPlayer = Session.get('selectedPlayer');
           PlayersList.update(selectedPlayer, {$inc: {score: -5} });
+      },
+      // We want to be able to delete a player as well.
+      // Similar to adding a player, we just a "plain old"
+      // MongoDB function.
+      'click .remove': function() {
+          var selectedPlayer = Session.get('selectedPlayer');
+          PlayersList.remove(selectedPlayer);
       }
+  });
+  // Just like a 'click' event allows us to execute code when a particular element is clicked,
+  // we can make a 'submit' event that is triggered when the user submits a form.
+  // // In order to do this, we need to make another events block, because this event will be
+  // // attached to the "addPlayerForm" template, rather than the "leaderboard" template.
+  // // By using the 'submit' event, it covers all the bases of how a user might interact with the
+  // // input form.  For example, they could click the submit button OR hit return, and it will still
+  // // work.
+  Template.addPlayerForm.events({
+        // Here's a test to make our function is working:
+        // console.log("Form submitted");
+        // One problem!  The above code doesn't work.  This is where
+        // The Event Object comes into play.
+        // When we place a form inside a web page, the web browser assumes we
+        // want the data from that form to be sent somewhere else.  Most of the
+        // time that is good, we want that.  With Meteor we don't, and so
+        // we need to override this behavior some how.
+        // We use the 'type' function on the event to have, um, the type of
+        // the event logged to the console.  We also call preventDefault
+        // to, um, prevent default behavior.
+        // In summation, the code below does the following:
+        // 1 - By the default, submitting the form won't do anything.
+        // 2 - We'll need to manually define all of the form's functionality
+        // 2 - The console.log statements will now work
+        // event.preventDefault();
+        // console.log("Form submitted, Bitch!");
+        // console.log(event.type);
+        // ===========================================================
+        // We want our submit form event to grab the contents of the "playerName"
+        // test field when the form is submitted, and then
+        // use that content when adding a player to the database.
+        // The code below uses the event object to grab the HTML element where
+        // ther name attribute is set to "playerName".  The console.log statement
+        // outputs the HTML for the text field, because we need to explicitly
+        // retrieve the value property of the text field.
+        'submit form': function(event) {
+            event.preventDefault();
+            var playerNameVar = event.target.playerName.value;
+            // In order to add a new player, it has to be added to MongoDB,
+            // do we'll use a MongoDB insert function:
+            PlayersList.insert({
+                name: playerNameVar,
+                score: 0
+            });
+    }
   });
 }

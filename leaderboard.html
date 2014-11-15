@@ -9,6 +9,7 @@ the body.  The Meteor templating system uses "Spacebars" syntax. -->
   {{> leaderboard }}
 </body>
 
+<!-- our first template -->
 <template name="leaderboard">
 <!-- If we leave the code below as {{ player }}, the result is: [object Object].
  We need to create an each block.  -->
@@ -21,7 +22,16 @@ the body.  The Meteor templating system uses "Spacebars" syntax. -->
     {{/each}}
   </ul>
     <p>Selected Player: {{showSelectedPlayer.name}}</p>
+    <input type="button" class="remove" value="Remove Player">
     <input type="button" class="increment" value="Give 5 Points">
     <input type="button" class="decrement" value="Take 5 Points">
-    <p>Total number of players is: {{count}}</p>
+    {{> addPlayerForm }}
+</template>
+
+<!-- our second template -->
+<template name="addPlayerForm">
+    <form>
+        <input type="text" name="playerName">
+        <input type="submit" value = "Add Player">
+    </form>
 </template>
