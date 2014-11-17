@@ -2,6 +2,7 @@
 /* When a user clicks on one of the players inside out list,
  * we want to change the background-color property of the "li"
  * element.  Let's create a class named "selected */
+@import '.meteor/local/build/programs/server/assets/packages/reywood_bootstrap3-sass/bootstrap';
 
 .selected {
   background-color: yellow;
