@@ -22,17 +22,26 @@ the body.  The Meteor templating system uses "Spacebars" syntax. -->
       <li class="player {{selectedClass}}">{{name}}: {{score}}</li>
     {{/each}}
   </ul>
-    <p>Selected Player: {{showSelectedPlayer.name}}</p>
-    <input type="button" class="remove" value="Remove Player">
-    <input type="button" class="increment" value="Give 5 Points">
-    <input type="button" class="decrement" value="Take 5 Points">
-    {{> addPlayerForm }}
+    <!-- We add an if statement here as well so that only registered users
+    can modify content. -->
+    {{#if currentUser}}
+      <p>Selected Player: {{showSelectedPlayer.name}}</p>
+
+      <input type="button" class="remove" value="Remove Player">
+      <input type="button" class="increment" value="Give 5 Points">
+      <input type="button" class="decrement" value="Take 5 Points">
+      {{> addPlayerForm }}
+    {{/if}}
 </template>
 
 <!-- our second template -->
 <template name="addPlayerForm">
+  <!-- We don't want unregistered users seeing content, for example,
+  they shouldn't see the "Add Player" form.  Let's fix this below -->
+  {{#if currentUser}}
     <form>
         <input type="text" name="playerName">
         <input type="submit" value = "Add Player">
     </form>
+  {{/if}}
 </template>
