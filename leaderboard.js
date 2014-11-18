@@ -33,7 +33,13 @@ if(Meteor.isClient){
         // that case, we want to sort alphabetically as well, so we sort by name
         // secondarily.
         'player': function(){
-          return PlayersList.find({}, {sort: {score: -1, name: 1} } );
+          // below we add the variable 'currentUserId' to attach each user to their own
+          // player's list.
+          var currentUserId = Meteor.userId();
+          // AND we the 'createdBy' variable to the find function, so that
+          // only the players created by the user that is logged in are shown.
+          return PlayersList.find({createdBy: currentUserId},
+                                 {sort: {score: -1, name: 1}});
         },
         // return "selected";
         // the code below is important!  We are retrieving the unique ID of the player.
@@ -155,11 +161,17 @@ if(Meteor.isClient){
         'submit form': function(event) {
             event.preventDefault();
             var playerNameVar = event.target.playerName.value;
+            // We want each user to have their OWN, unique leaderboard
+            // By adding this line below, and the 'createdBy' variable to the
+            // mongodb function below, a new line is added to each NEW player object:
+            // 'createdBy:  "mndfdDfdf456DFf34e" (the ID of the user that created the player object)'
+            var currentUserId = Meteor.userId();
             // In order to add a new player, it has to be added to MongoDB,
             // do we'll use a MongoDB insert function:
             PlayersList.insert({
                 name: playerNameVar,
-                score: 0
+                score: 0,
+                createdBy: currentUserId
             });
     }
   });
