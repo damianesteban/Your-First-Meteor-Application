@@ -1,38 +1,35 @@
 <head>
-  <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-        <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-        <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-    <![endif]-->
+  <title>Leaderboard</title>
+  <meta name="viewport" content="width=device-width, user-scalable=no">
+  <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600' rel='stylesheet' type='text/css'>
   <title>Leaderboard</title>
 </head>
-
 <body>
-  <h1>The Leaderboard</h1>
-  <i class="fa fa-trophy"></i>
-<!-- in order to make our template "appear", we have to inject it into
-the body.  The Meteor templating system uses "Spacebars" syntax. -->
-  {{> leaderboard}}
-<!-- we inject this into the view so users can login -->
-  {{> loginButtons}}
+  <div class="outer">
+    <div class="logo">
+      <h1 class="title">Super Hero Leaderboard</h1>
+      <div class="subtitle">Add and give points to your favorite super heroes</div>
+      {{> leaderboard}}
+    </div>
+  </div>
+  <!-- we inject this into the view so users can login -->
+  <div class="login-form">
+    {{> loginButtons}}
+  </div>
 </body>
 
 <!-- our first template -->
 <template name="leaderboard">
 <!-- If we leave the code below as {{ player }}, the result is: [object Object].
  We need to create an each block.  -->
-  <ul>
+  <ol class="leaderboard">
     {{#each player}}
       <!-- we should add a class to our li element, so we can target it specifically. -->
       <!-- We need need to place a reference to the "selectClass" function inside of our
       li element's class attribute -->
       <li class="player {{selectedClass}}">{{name}}: {{score}}</li>
     {{/each}}
-  </ul>
+  </ol>
     <!-- We add an if statement here as well so that only registered users
     can modify content. -->
     {{#if currentUser}}

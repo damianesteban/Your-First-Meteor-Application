@@ -5,9 +5,22 @@ PlayersList = new Mongo.Collection('players');
 // The code below display itself in BOTH the command line (server) AND
 // the client (look in the DevTools console) because it is running on both.
 console.log("Hello World from Meteor!");
+if(Meteor.isServer) {
+    // we want to publish the data that's inside our PlayersList collection.
+    // We are specifying what data should be available to users.
+    Meteor.publish('thePlayers', function() {
+        // inside this function we will specify WHAT data should be
+        // available to our users.  We'll return all of the data from inside
+        // the "PlayersList" collection:
+        // However, we want "precise publications".  So we do the following:
+        var currentUserId = this.userId;
+        return PlayersList.find( {createdBy: currentUserId});
+    });
 
+}
 // Now if we add a conditional:
 if(Meteor.isClient){
+    Meteor.subscribe('thePlayers');
   // This code only runs on the client! (you'll see it in the DevTools console only!)
   // console.log("Hello Client!");
   //=====================================================================
@@ -38,8 +51,7 @@ if(Meteor.isClient){
           var currentUserId = Meteor.userId();
           // AND we the 'createdBy' variable to the find function, so that
           // only the players created by the user that is logged in are shown.
-          return PlayersList.find({createdBy: currentUserId},
-                                 {sort: {score: -1, name: 1}});
+          return PlayersList.find({}, { sort: { score: -1, name: 1}});
         },
         // return "selected";
         // the code below is important!  We are retrieving the unique ID of the player.
@@ -173,6 +185,6 @@ if(Meteor.isClient){
                 score: 0,
                 createdBy: currentUserId
             });
-    }
-  });
-}
+        }
+    });
+};
