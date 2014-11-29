@@ -34,7 +34,10 @@ if(Meteor.isServer) {
       'removePlayerData': function(selectedPlayer) {
           // below we re-create the remove function inside the function:
           PlayersList.remove(selectedPlayer);
-      }
+      },
+      'modifyPlayerScore': function(selectedPlayer, scoreValue){
+          PlayersList.update(selectedPlayer, {$inc: {score: scoreValue} });
+        }
     });
 
 }
@@ -139,13 +142,15 @@ if(Meteor.isClient){
       // PlayersList.update(selectedPlayer, {$set: {score: 5} });
       // BUT, $set will do only that, "set" the value to 5.  We want to increment the value
       // by 5, so we do the following:
+      // NOTE: This code by DRY'ed up.  Like before, with the
+      // security issue, we use Meteor.call.
       'click .increment': function() {
           var selectedPlayer = Session.get('selectedPlayer');
-          PlayersList.update(selectedPlayer, {$inc: {score: 5} });
+          Meteor.call('modifyPlayerScore', selectedPlayer, 5);
       },
       'click .decrement': function() {
           var selectedPlayer = Session.get('selectedPlayer');
-          PlayersList.update(selectedPlayer, {$inc: {score: -5} });
+          Meteor.call('modifyPlayerScore', selectedPlayer, -5);
       },
       'click .remove': function() {
           var selectedPlayer = Session.get('selectedPlayer');
