@@ -16,6 +16,26 @@ if(Meteor.isServer) {
         var currentUserId = this.userId;
         return PlayersList.find( {createdBy: currentUserId});
     });
+    // We need to add methods into our isClient conditional block so that
+    // users can have secure access to the database, and the outside world cannot.
+    Meteor.methods({
+      // methods go here
+      'insertPlayerData': function(playerNameVar) {
+          // we need to grab the unique ID of the user below, with the Meteor.userId
+          // function.
+          var currentUserId = Meteor.userId();
+          // Now we add our insert function
+          PlayersList.insert({
+              name: playerNameVar,
+              score: 0,
+              createdBy: currentUserId
+          });
+      },
+      'removePlayerData': function(selectedPlayer) {
+          // below we re-create the remove function inside the function:
+          PlayersList.remove(selectedPlayer);
+      }
+    });
 
 }
 // Now if we add a conditional:
@@ -38,7 +58,6 @@ if(Meteor.isClient){
   // Note:  This is just like an object (more or less), and the syntax for declaring
   // functions in object literals.
   Template.leaderboard.helpers({
-
         // by passing in in the sort method, we define how we want to sort
         // our players.  In this case we sort by the 'score'
         // attribute, -1, which displays (sorts) the players in descending order.
@@ -128,12 +147,9 @@ if(Meteor.isClient){
           var selectedPlayer = Session.get('selectedPlayer');
           PlayersList.update(selectedPlayer, {$inc: {score: -5} });
       },
-      // We want to be able to delete a player as well.
-      // Similar to adding a player, we just a "plain old"
-      // MongoDB function.
       'click .remove': function() {
           var selectedPlayer = Session.get('selectedPlayer');
-          PlayersList.remove(selectedPlayer);
+          Meteor.call('removePlayerData', selectedPlayer);
       }
   });
   // Just like a 'click' event allows us to execute code when a particular element is clicked,
@@ -173,18 +189,25 @@ if(Meteor.isClient){
         'submit form': function(event) {
             event.preventDefault();
             var playerNameVar = event.target.playerName.value;
+            Meteor.call('insertPlayerData', playerNameVar);
             // We want each user to have their OWN, unique leaderboard
             // By adding this line below, and the 'createdBy' variable to the
             // mongodb function below, a new line is added to each NEW player object:
             // 'createdBy:  "mndfdDfdf456DFf34e" (the ID of the user that created the player object)'
-            var currentUserId = Meteor.userId();
+            // The code below is moved to the isServer block
+            // var currentUserId = Meteor.userId();
             // In order to add a new player, it has to be added to MongoDB,
             // do we'll use a MongoDB insert function:
-            PlayersList.insert({
-                name: playerNameVar,
-                score: 0,
-                createdBy: currentUserId
-            });
+            // PlayersList.insert({
+            //    name: playerNameVar,
+            //    score: 0,
+            //    createdBy: currentUserId
+            // });
+            // This is how we choose what method we want to execute once this
+            // form is submitted.  When a user submits the form to add a new
+            // player, the submission will not work, but in the terminal the
+            // sendLogMessage method will be called and we will see its output.
+
         }
     });
 };
